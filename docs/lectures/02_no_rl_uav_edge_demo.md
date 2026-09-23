@@ -25,7 +25,9 @@ For a candidate limit \(K\), the discrete action space is:
 \mathcal{A} = \{0, 1, \ldots, K\}.
 \]
 
-The simulator then advances by `control_interval` seconds. During that time:
+The scenario requests an advance of `control_interval` seconds; the next
+processed event can put simulated time slightly past that boundary. During
+the interval:
 
 - UAV velocities are applied through the mobility handler;
 - tasks can expire;
@@ -76,6 +78,7 @@ Command-level inputs:
 --compute-demand-range
 --data-size-range
 --output
+--plot-output
 ```
 
 Internal simulator inputs:
@@ -114,7 +117,17 @@ metrics
 render_text
 candidate_task_ids
 observation_sizes
+time_before
+agent_positions_before
+agent_positions
+device_positions
+target_task_ids
 ```
+
+`action_masks` and `candidate_task_ids` describe the decision state before
+the action. `agent_positions` and `metrics` describe the state after the
+step. The optional PNG plots sampled UAV positions on the ground plane;
+each UAV gets a separate panel.
 
 ## Run A Single Trace
 
@@ -127,7 +140,8 @@ python -m aeroedge_rl.experiments.cli.no_rl_demo \
   --num-devices 5 \
   --episode-duration 12 \
   --candidate-limit 3 \
-  --output /tmp/aeroedge_no_rl_nearest.jsonl
+  --output /tmp/aeroedge_no_rl_nearest.jsonl \
+  --plot-output /tmp/aeroedge_no_rl_nearest.png
 ```
 
 Expected console pattern:
@@ -138,6 +152,7 @@ step=00 t=...
 ...
 No-RL demo finished: steps=...
 Wrote trace JSONL: ...
+Wrote UAV trajectory plot: ...
 ```
 
 ## Compare Baselines
@@ -183,6 +198,15 @@ The no-RL demo should answer:
 - Are rewards aligned with service success, deadline misses, waiting, and movement?
 
 If these answers are unclear, do not move to RL yet.
+
+In the seed-7, 12-second example, the current implementation produced 11
+control steps, 1 service hit, 0 misses, and 9 pending tasks. Its final
+reported simulated time was 12.2 seconds because event-wise advancement
+can pass the nominal episode boundary. This is a runnable sanity check,
+not evidence that the policy clears the workload.
+
+Next, compare policies in [Lecture 03](03_heuristic_closed_loop.md) and
+inspect paths in [Lecture 04](04_trajectory_data_and_visualization.md).
 
 ## Bridge To Q-learning
 

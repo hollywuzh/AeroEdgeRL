@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from aeroedge_rl.baselines.policies import BASELINE_POLICIES
+from aeroedge_rl.experiments.trajectory import plot_trajectory
 from aeroedge_rl.scenarios.uav_edge_service import UAVServiceEnvConfig
 from aeroedge_rl.scenarios.uav_edge_service.environment import GradysUAVServiceCoreEnv
 
@@ -33,23 +34,32 @@ def main() -> None:
         done = False
         step = 0
         while not done and step < args.max_steps:
+            before = env.visualization_snapshot()
+            action_masks = {agent: env.action_mask(agent) for agent in env.agents}
+            candidate_task_ids = {
+                agent: [task.task_id for task in env.candidate_tasks(agent)]
+                for agent in env.agents
+            }
             actions = policy(env, rng)
             result = env.step(actions)
+            after = env.visualization_snapshot()
             metrics = env.metrics_snapshot()
             record = {
                 "step": step,
+                "time_before": before["time"],
                 "time": env.time,
                 "policy": args.policy,
                 "actions": actions,
-                "action_masks": {agent: env.action_mask(agent) for agent in env.agents},
+                "action_masks": action_masks,
                 "reward_sum": float(sum(result.rewards.values())),
                 "rewards": result.rewards,
                 "metrics": metrics,
                 "render_text": env.render_text(),
-                "candidate_task_ids": {
-                    agent: [task.task_id for task in env.candidate_tasks(agent)]
-                    for agent in env.agents
-                },
+                "candidate_task_ids": candidate_task_ids,
+                "agent_positions_before": before["agent_positions"],
+                "agent_positions": after["agent_positions"],
+                "device_positions": before["device_positions"],
+                "target_task_ids": after["targets"],
                 "observation_sizes": {
                     agent: len(observation)
                     for agent, observation in observations.items()
@@ -74,6 +84,10 @@ def main() -> None:
     with output_path.open("w") as file_obj:
         for record in records:
             file_obj.write(json.dumps(_json_safe(record)) + "\n")
+
+    if args.plot_output and records:
+        plot_trajectory(records, args.plot_output, area_size=env.config.area_size)
+        print(f"Wrote UAV trajectory plot: {Path(args.plot_output).resolve()}")
 
     final_metrics = records[-1]["metrics"] if records else env.metrics_snapshot()
     print(
@@ -101,6 +115,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--data-size-range", type=float, nargs=2, default=(0.5, 4.0))
     parser.add_argument("--max-steps", type=int, default=32)
     parser.add_argument("--output", default="outputs/no_rl_demo_trace.jsonl")
+    parser.add_argument("--plot-output", help="Optional PNG path for UAV trajectory plots")
     return parser.parse_args()
 
 

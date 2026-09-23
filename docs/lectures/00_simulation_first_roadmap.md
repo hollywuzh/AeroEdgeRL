@@ -1,35 +1,59 @@
 # Lecture 00: Simulation-First Roadmap
 
-## Motivation
+## Learning Goals
 
-The core research object is not an isolated RL algorithm. It is an event-driven
-UAV edge intelligence simulator with interchangeable decision policies.
+After this lecture, the reader should be able to:
 
-The RL part can be summarized by the usual discounted return,
+- identify which layer owns simulated events and which layer chooses actions;
+- explain why one policy decision can span several simulator events;
+- verify that Python imports the local GrADyS-SIM checkout;
+- run the first no-RL trace and name its recorded outputs.
+
+## Problem Background
+
+The research object is an event-driven UAV edge intelligence scenario with
+interchangeable decision policies. Tasks arrive, UAVs move, deadlines expire,
+and service completes in simulated time. A learning algorithm sees this process
+only through a chosen control boundary.
+
+The teaching sequence is:
+
+```text
+simulator semantics -> scenario lifecycle -> measurable no-RL policy
+                    -> RL formulation -> algorithm -> evaluation
+```
+
+## Theory: Events And Decisions
+
+Let \(\tau_n\) denote the simulated time of event \(n\), and let \(t_k\)
+be the time of control decision \(k\). At \(t_k\), a policy selects action
+\(a_k\). The scenario requests an advance of `control_interval` \(\Delta\)
+and returns an observation and reward after the simulator processes events:
 
 \[
-G_t = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1},
+(o_{k+1},r_k,d_k)=F_{\Delta}(x_k,a_k,\xi_k).
 \]
 
-but this quantity is only meaningful after the simulator defines what a time
-step, reward event, and episode mean.
+Here \(x_k\) is the simulator and scenario state, \(\xi_k\) collects sampled
+workload and event outcomes, and \(d_k\) indicates episode completion. The
+control index \(k\) is not an event index \(n\): several events may occur
+during one decision interval. The current bridge repeatedly executes whole
+events until simulated time reaches or exceeds the requested boundary. Thus
+\(t_{k+1}\) can be slightly greater than \(t_k+\Delta\), including at the
+configured episode duration. We will inspect this implementation in
+[Lecture 01](01_gradys_core_in_aeroedge.md).
 
-This means the teaching sequence must start from:
+An RL objective may later use discounted return,
 
-```text
-simulator -> scenario -> metrics -> rule-based policy -> RL algorithm
-```
+\[
+G_k = \sum_{j=0}^{T-k-1} \gamma^j r_{k+j},
+\]
 
-instead of:
+where \(T\) counts control decisions in an episode. Its interpretation depends
+on how the scenario aggregates events into \(r_k\), when the episode ends,
+and what information appears in \(o_k\).
 
-```text
-RL algorithm -> benchmark toy environment -> simulator later
-```
-
-The second order is tempting, but it hides the real problem: in AeroEdgeRL, the
-decision policy is only one component in a larger cyber-physical simulation.
-
-## Design Contract
+## AeroEdgeRL Contract
 
 AeroEdgeRL preserves the GrADyS-SIM discrete-event core:
 
@@ -41,9 +65,17 @@ SimulationBuilder
   -> step_simulation / simulated time
 ```
 
-RL libraries sit outside this core. Gymnasium, PettingZoo, RLlib, and future
-AgileRL adapters translate the same scenario into training APIs, but they do not
-own event scheduling, mobility updates, protocol behavior, or task lifecycle.
+The current `GradysUAVServiceCoreEnv` wraps this simulator and defines UAV
+task arrivals, candidate selection, rewards, episode boundaries, and metrics.
+Gymnasium, PettingZoo, RLlib, and future AgileRL integrations adapt the
+scenario to training APIs.
+
+| Owner | Input | Output |
+| --- | --- | --- |
+| GrADyS-SIM core | Nodes, handlers, scheduled events, protocol commands | Advanced simulated time and node state. |
+| AeroEdgeRL scenario | Configuration, seed, UAV actions | Observations, rewards, done flags, metrics. |
+| Heuristic or RL policy | Available decision information | UAV action indices. |
+| Experiment runner | Scenario and policy | Traces and episode summaries. |
 
 ## Teaching Stack
 
@@ -57,24 +89,10 @@ flowchart TD
     F --> G["RLlib MARL"]
 ```
 
-## Inputs And Outputs Of The Teaching Track
+## Minimal Runnable Example
 
-Inputs:
-
-- local `gradys-sim-nextgen` editable install;
-- `aeroedge-rl` conda environment;
-- AeroEdgeRL UAV edge service scenario;
-- deterministic seeds and compact experiment configs.
-
-Outputs:
-
-- lecture markdown files;
-- runnable CLI examples;
-- JSONL traces;
-- CSV/JSON metrics;
-- later, learned policies and checkpoints.
-
-## Minimum Setup Check
+Use the clean `aeroedge-rl` environment with editable installs of AeroEdgeRL
+and the local `gradys-sim-nextgen` checkout. The first check is:
 
 Run:
 
@@ -84,23 +102,26 @@ cd /Users/wupengfei/Documents/Framework4test/AeroEdgeRL
 python scripts/check_environment.py
 ```
 
-Expected outcome:
+The script prints the Python executable and version, `aeroedge_rl` version,
+`gradysim` and mobility-module paths, and finally:
 
 ```text
 Environment check passed.
 ```
 
-This check is part of the lecture contract. If `gradysim` resolves to an
-installed package instead of the local `gradys-sim-nextgen` clone, do not start
-algorithm work.
+When a sibling `gradys-sim-nextgen` directory exists, the script checks that
+`gradysim` was imported from it. On another host, set
+`AEROEDGE_GRADYSIM_ROOT` to the absolute local checkout path to enforce the
+same check. It also checks for
+`DynamicVelocityMobilityConfiguration`. A passing check confirms import
+provenance and this required API; it is not a simulator behavior test.
 
-## First Demonstration Before RL
-
-Before Q-learning, DQN, or PPO, the reader should run:
+Then run one short no-RL trace:
 
 ```bash
 python -m aeroedge_rl.experiments.cli.no_rl_demo \
   --policy nearest \
+  --seed 7 \
   --num-uavs 1 \
   --num-devices 5 \
   --episode-duration 12 \
@@ -108,5 +129,31 @@ python -m aeroedge_rl.experiments.cli.no_rl_demo \
   --output /tmp/aeroedge_no_rl_nearest.jsonl
 ```
 
-This confirms that the simulator can already produce observations, actions,
-rewards, task queues, UAV movement, and metrics without any learning algorithm.
+## Simulation Effect
+
+The command prints a line for each control step with simulated time, selected
+actions, reward sum, pending task count, hits, and misses. It writes a JSONL
+trace containing action masks, candidate task IDs, reward values, and metric
+snapshots. Add `--plot-output /tmp/aeroedge_no_rl_nearest.png` to save a
+trajectory plot; the JSONL trace includes positions before and after each
+decision interval.
+
+Success here means the environment imports correctly and the decision loop
+runs to an episode ending. It does not establish that `nearest` meets
+deadlines, that trajectories are interpretable, or that RL will improve the
+result. Lectures 03 and 04 add heuristic comparisons and trajectory inspection.
+
+## Common Mistakes
+
+- Treating `control_interval` as the spacing between individual simulator
+  events; it is the requested interval between policy decisions.
+- Trusting an import from an older installed `gradysim` package because the
+  Python import itself succeeds.
+- Reading one short trace as a policy comparison or research result.
+- Assuming the nominal episode duration is an exact stop timestamp; the
+  event-wise bridge can step past it by one event.
+
+## Next Step
+
+Continue to [Lecture 01: GrADyS Core In AeroEdgeRL](01_gradys_core_in_aeroedge.md)
+to inspect how the scenario builds and advances the event-driven simulator.

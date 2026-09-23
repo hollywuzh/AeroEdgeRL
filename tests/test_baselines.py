@@ -24,6 +24,7 @@ def test_baseline_policies_emit_valid_actions():
             actions = policy(env, rng)
             assert set(actions) == set(env.agents)
             assert all(0 <= action < env.action_size for action in actions.values())
+            assert all(env.action_mask(agent)[action] for agent, action in actions.items())
     finally:
         env.close()
 
@@ -50,4 +51,3 @@ def test_run_policy_episodes_and_summary():
     assert rows[0].policy == "hover"
     assert rows[0].steps > 0
     assert summary["hover"]["episodes"] == 1.0
-

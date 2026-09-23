@@ -18,8 +18,13 @@ def hover_policy(env: GradysUAVServiceCoreEnv, rng: random.Random) -> ActionDict
 
 
 def random_policy(env: GradysUAVServiceCoreEnv, rng: random.Random) -> ActionDict:
-    """Choose a random candidate index for each UAV."""
-    return {agent: rng.randrange(env.action_size) for agent in env.agents}
+    """Choose uniformly among currently valid actions for each UAV."""
+    return {
+        agent: rng.choice(
+            [index for index, allowed in enumerate(env.action_mask(agent)) if allowed]
+        )
+        for agent in env.agents
+    }
 
 
 def earliest_deadline_first_policy(env: GradysUAVServiceCoreEnv, rng: random.Random) -> ActionDict:
@@ -30,7 +35,7 @@ def earliest_deadline_first_policy(env: GradysUAVServiceCoreEnv, rng: random.Ran
     """
     actions: ActionDict = {}
     for agent in env.agents:
-        actions[agent] = 1 if env.candidate_tasks(agent) else 0
+        actions[agent] = 1 if env.action_mask(agent)[1] else 0
     return actions
 
 
@@ -38,6 +43,9 @@ def nearest_request_first_policy(env: GradysUAVServiceCoreEnv, rng: random.Rando
     """Serve the nearest visible request for each UAV."""
     actions: ActionDict = {}
     for agent in env.agents:
+        if not any(env.action_mask(agent)[1:]):
+            actions[agent] = 0
+            continue
         candidates = env.candidate_tasks(agent)
         if not candidates:
             actions[agent] = 0
@@ -63,6 +71,9 @@ def slo_risk_policy(env: GradysUAVServiceCoreEnv, rng: random.Random) -> ActionD
     """
     actions: ActionDict = {}
     for agent in env.agents:
+        if not any(env.action_mask(agent)[1:]):
+            actions[agent] = 0
+            continue
         candidates = env.candidate_tasks(agent)
         if not candidates:
             actions[agent] = 0

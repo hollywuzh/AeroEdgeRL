@@ -86,6 +86,15 @@ sequenceDiagram
     CoreEnv-->>User: observations, rewards, done, info
 ```
 
+The actual boundary is `GradysUAVServiceCoreEnv.step(actions)`. It assigns
+targets, commands protocol velocities, calls `Simulator.step_simulation()`
+repeatedly through `_advance_until`, then updates arrivals, service outcomes,
+and rewards. A single control decision may process multiple GrADyS events.
+The current implementation does not insert an exact control-boundary event,
+so the reported time can overshoot the requested boundary. Inspect the
+reported `time` field rather than assuming exact multiples of
+`control_interval`.
+
 ## Inputs
 
 Scenario configuration:
@@ -137,6 +146,28 @@ infos: dict[agent_id, dict]
 metrics_snapshot: dict[str, float]
 visualization_snapshot: dict[str, object]
 ```
+
+`visualization_snapshot()` includes simulated time, UAV and device positions,
+pending tasks, selected targets, hits, and misses. The no-RL CLI uses the
+position data before and after each action to create trajectory records.
+
+## Minimal Runnable Check
+
+```bash
+conda activate aeroedge-rl
+cd /Users/wupengfei/Documents/Framework4test/AeroEdgeRL
+python scripts/check_environment.py
+python -m aeroedge_rl.experiments.cli.no_rl_demo \
+  --policy nearest --seed 7 --num-uavs 1 --num-devices 5 \
+  --episode-duration 12 --candidate-limit 3 \
+  --output /tmp/aeroedge_core_trace.jsonl \
+  --plot-output /tmp/aeroedge_core_trajectory.png
+```
+
+For this configuration, inspect a JSONL row's `time_before`, `time`,
+`agent_positions_before`, and `agent_positions`. The action mask and
+`candidate_task_ids` refer to the state at `time_before`; rewards and metrics
+refer to the state after advancing to `time`.
 
 ## Why This Matters Before RL
 

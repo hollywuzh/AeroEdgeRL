@@ -64,6 +64,9 @@ docs = [
     "mkdocs-material",
     "pymdown-extensions",
 ]
+viz = [
+    "matplotlib>=3.8",
+]
 
 [tool.setuptools.packages.find]
 include = ["aeroedge_rl*"]

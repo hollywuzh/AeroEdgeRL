@@ -228,3 +228,6 @@ only for one-off rescue checks before the environment is installed.
 
 The full Mac plus WSL2 GPU workflow is documented in
 [Multi-Host Development Model](07_multi_host_development_model.md).
+
+The GrADyS-SIM dependency source rule is documented in
+[GrADyS-SIM Dependency Strategy](11_gradysim_dependency_strategy.md).

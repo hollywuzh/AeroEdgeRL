@@ -105,6 +105,10 @@ python scripts/check_environment.py
 The environment checker should confirm that `gradysim` resolves to the local
 `gradys-sim-nextgen` checkout.
 
+This is not optional during the current research-development phase. Do not mix a
+third-party installed `gradysim` package with the local simulator checkout when
+running AeroEdgeRL experiments.
+
 If a host uses a different directory layout, set:
 
 ```bash
