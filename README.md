@@ -96,3 +96,16 @@ mkdocs serve
 ```
 
 Then open the local URL printed by MkDocs.
+
+## Online Documentation
+
+The repository includes a GitHub Actions workflow for publishing the MkDocs site
+to GitHub Pages.
+
+In the GitHub repository, enable:
+
+```text
+Settings -> Pages -> Build and deployment -> Source -> GitHub Actions
+```
+
+After that, every push to `main` builds and deploys the documentation site.
