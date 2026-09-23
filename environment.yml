@@ -1,0 +1,21 @@
+name: aeroedge-rl
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - cryptography
+  - pip:
+      - aiohttp>=3.11.14
+      - gymnasium==1.1.1
+      - mkdocs
+      - mkdocs-material
+      - numpy<2
+      - pandas>=2.2.3
+      - pettingzoo==1.26.1
+      - pymdown-extensions
+      - pytest
+      - ray[rllib]
+      - ruff
+      - torch
+      - websockets>=12

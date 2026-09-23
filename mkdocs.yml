@@ -1,0 +1,54 @@
+site_name: AeroEdgeRL
+site_description: RL-first UAV edge intelligence simulation lectures and framework docs.
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - content.code.copy
+  palette:
+    - scheme: default
+      primary: blue grey
+      accent: teal
+
+nav:
+  - Home: index.md
+  - Lecture Notes:
+      - Overview: lectures/README.md
+      - "00 Simulation-First Roadmap": lectures/00_simulation_first_roadmap.md
+      - "01 GrADyS Core In AeroEdgeRL": lectures/01_gradys_core_in_aeroedge.md
+      - "02 No-RL UAV Edge Service Demo": lectures/02_no_rl_uav_edge_demo.md
+  - Project Docs:
+      - Project Charter: 00_project_charter.md
+      - GrADyS Core Preservation: 01_gradysim_core_preservation.md
+      - Target Architecture: 02_target_architecture.md
+      - RL Interfaces: 03_rl_interfaces.md
+      - Phase 1 Migration Design: 04_phase1_migration_design.md
+      - Phase 1 Implementation Plan: 05_phase1_implementation_plan.md
+      - Development Environment: 06_development_environment.md
+      - Multi-Host Development Model: 07_multi_host_development_model.md
+      - AgileRL Adapter Plan: 08_agilerl_adapter_plan.md
+      - Project Context Handoff: 09_project_context_handoff.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
