@@ -7,20 +7,23 @@ After this lecture, the reader should be able to:
 - identify which layer owns simulated events and which layer chooses actions;
 - explain why one policy decision can span several simulator events;
 - verify that Python imports the local GrADyS-SIM checkout;
-- run the first no-RL trace and name its recorded outputs.
+- distinguish the runnable dynamic prototype from the planned first TSP lesson.
 
 ## Problem Background
 
-The research object is an event-driven UAV edge intelligence scenario with
-interchangeable decision policies. Tasks arrive, UAVs move, deadlines expire,
-and service completes in simulated time. A learning algorithm sees this process
-only through a chosen control boundary.
+The first formal teaching problem is a closed
+[static sensor TSP](../scenarios/static_sensor_tsp.md): one UAV visits every
+fixed sensor and returns to the depot. Route construction is a combinatorial
+decision; GrADyS-SIM supplies movement and visit events. Task values,
+deadlines, dynamic arrivals, queues, and offloading are absent from this first
+problem. The existing dynamic edge-service environment remains a framework
+prototype and provides the current runnable simulator check.
 
 The teaching sequence is:
 
 ```text
-simulator semantics -> scenario lifecycle -> measurable no-RL policy
-                    -> RL formulation -> algorithm -> evaluation
+simulator semantics -> static TSP instance -> no-RL tour
+                    -> GrADyS execution -> learning formulation
 ```
 
 ## Theory: Events And Decisions
@@ -65,28 +68,28 @@ SimulationBuilder
   -> step_simulation / simulated time
 ```
 
-The current `GradysUAVServiceCoreEnv` wraps this simulator and defines UAV
-task arrivals, candidate selection, rewards, episode boundaries, and metrics.
-Gymnasium, PettingZoo, RLlib, and future AgileRL integrations adapt the
-scenario to training APIs.
+The existing `GradysUAVServiceCoreEnv` wraps the simulator for the older
+dynamic edge-service prototype. A static TSP route executor has not been
+implemented yet. Both future TSP research tracks will use the preserved
+GrADyS core; one chooses the next unvisited sensor, and the other supplies
+a complete permutation before execution.
 
 | Owner | Input | Output |
 | --- | --- | --- |
 | GrADyS-SIM core | Nodes, handlers, scheduled events, protocol commands | Advanced simulated time and node state. |
-| AeroEdgeRL scenario | Configuration, seed, UAV actions | Observations, rewards, done flags, metrics. |
-| Heuristic or RL policy | Available decision information | UAV action indices. |
-| Experiment runner | Scenario and policy | Traces and episode summaries. |
+| Static TSP scenario (planned) | Depot, fixed sensors, route or next-node action | Visit events, executed positions, tour completion. |
+| Route solver or policy (planned) | Shared TSP instance and valid-node mask | Complete permutation or next sensor ID. |
+| Experiment runner (planned) | Instance, solver, executor | Tour cost, execution trace, trajectory. |
 
 ## Teaching Stack
 
 ```mermaid
 flowchart TD
-    A["GrADyS discrete-event simulator"] --> B["AeroEdgeRL scenario"]
-    B --> C["No-RL rule-based policies"]
-    C --> D["Metrics and traces"]
-    D --> E["Tabular RL"]
-    E --> F["Deep RL"]
-    F --> G["RLlib MARL"]
+    A["GrADyS discrete-event simulator"] --> B["Static sensor TSP executor"]
+    B --> C["Nearest-neighbor and 2-opt tours"]
+    C --> D["Planned versus executed routes"]
+    D --> E["Track A: next-node policy"]
+    D --> F["Track B: full-route policy"]
 ```
 
 ## Minimal Runnable Example
@@ -116,7 +119,9 @@ same check. It also checks for
 `DynamicVelocityMobilityConfiguration`. A passing check confirms import
 provenance and this required API; it is not a simulator behavior test.
 
-Then run one short no-RL trace:
+The static TSP CLI is still planned. For now, run a short trace of the
+separate dynamic edge-service prototype to check the current simulator
+integration:
 
 ```bash
 python -m aeroedge_rl.experiments.cli.no_rl_demo \
@@ -138,10 +143,11 @@ snapshots. Add `--plot-output /tmp/aeroedge_no_rl_nearest.png` to save a
 trajectory plot; the JSONL trace includes positions before and after each
 decision interval.
 
-Success here means the environment imports correctly and the decision loop
-runs to an episode ending. It does not establish that `nearest` meets
-deadlines, that trajectories are interpretable, or that RL will improve the
-result. Lectures 03 and 04 add heuristic comparisons and trajectory inspection.
+Success here means the environment imports correctly and this prototype's
+decision loop runs to an episode ending. It is not a TSP route execution.
+Its detailed pages live under the [existing edge-service prototype](../scenarios/uav_edge_service.md).
+Formal TSP Lectures 02-04 remain planned until the route solvers and GrADyS
+executor are runnable.
 
 ## Common Mistakes
 

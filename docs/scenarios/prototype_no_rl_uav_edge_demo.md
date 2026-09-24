@@ -1,9 +1,13 @@
-# Lecture 02: No-RL UAV Edge Service Demo
+# Prototype: No-RL UAV Edge Service Demo
+
+This is an existing dynamic edge-service prototype. It remains runnable, but
+is not the first formal teaching scenario. The first planned teaching problem
+is [Static Sensor TSP](static_sensor_tsp.md).
 
 ## Motivation
 
 Before implementing Q-learning or PPO, we need a working non-learning baseline.
-This lecture runs fixed policies in the same simulator that future RL agents
+This prototype runs fixed policies in the same simulator that future RL agents
 will use.
 
 The goal is not to be optimal. The goal is to make the simulator observable.
@@ -205,8 +209,8 @@ reported simulated time was 12.2 seconds because event-wise advancement
 can pass the nominal episode boundary. This is a runnable sanity check,
 not evidence that the policy clears the workload.
 
-Next, compare policies in [Lecture 03](03_heuristic_closed_loop.md) and
-inspect paths in [Lecture 04](04_trajectory_data_and_visualization.md).
+Next, compare policies in the [heuristic prototype](prototype_heuristic_closed_loop.md)
+and inspect paths in the [trajectory prototype](prototype_trajectory_data_and_visualization.md).
 
 ## Bridge To Q-learning
 

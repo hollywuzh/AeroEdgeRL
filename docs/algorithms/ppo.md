@@ -17,7 +17,9 @@ PPO is a reasonable first training algorithm because:
 
 ## AeroEdgeRL Use
 
-Initial PPO experiments should target the UAV edge service scenario.
+The existing PPO smoke experiment targets the dynamic UAV edge-service
+prototype. It verifies adapter wiring, not the first formal static TSP
+teaching problem or a trained policy result.
 
 The expected progression is:
 

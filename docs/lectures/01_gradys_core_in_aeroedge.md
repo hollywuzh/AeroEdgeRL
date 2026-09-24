@@ -34,12 +34,12 @@ Simulator
   owns event-loop execution and simulated time
 ```
 
-## AeroEdgeRL Core Scenario
+## Existing Core Prototype And TSP Target
 
-The current teaching scenario is:
+The current implemented prototype is:
 
 ```text
-UAV edge service
+dynamic UAV edge service
 ```
 
 It contains:
@@ -57,6 +57,13 @@ The important class is:
 ```text
 aeroedge_rl.scenarios.uav_edge_service.environment.GradysUAVServiceCoreEnv
 ```
+
+This class demonstrates that AeroEdgeRL can preserve and control the
+GrADyS-SIM core, but its dynamic tasks and deadlines are outside the first
+formal teaching problem. The first planned scenario is a
+[static sensor TSP](../scenarios/static_sensor_tsp.md): one UAV, fixed
+sensors, mandatory visits, and a return to the depot. Its route executor
+will use the same simulator builder, nodes, protocols, and mobility handler.
 
 This core environment deliberately avoids importing Gymnasium, PettingZoo,
 RLlib, Ray, Torch, or AgileRL. Those libraries wrap it later.
@@ -124,7 +131,7 @@ but AeroEdgeRL does not require an explicit transition matrix \(P(s' \mid s,a)\)
 The GrADyS-backed simulator acts as a generative model: given a state and an
 action, it advances event time and returns the next observation and reward.
 
-Policy input at each control step:
+Policy input in the existing dynamic prototype:
 
 ```text
 agent observations
@@ -133,7 +140,7 @@ action mask
 metrics snapshot
 ```
 
-## Outputs
+## Outputs Of The Existing Prototype
 
 The simulator produces:
 
@@ -180,4 +187,6 @@ learning begins, we need to know:
 - how tasks arrive and expire;
 - what metrics define a good policy.
 
-The next lecture answers these questions through no-RL rule-based policies.
+Formal Lecture 02 will define the static TSP contract. Until its executor
+exists, the [dynamic no-RL prototype](../scenarios/prototype_no_rl_uav_edge_demo.md)
+remains a runnable example of this simulator boundary.

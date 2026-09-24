@@ -1,6 +1,8 @@
 # Scenarios
 
-Scenarios are first-class research objects in AeroEdgeRL.
+Scenarios are first-class research objects in AeroEdgeRL. The initial teaching
+sequence starts from a distilled combinatorial optimization problem and adds
+domain components only after that problem can be solved and executed.
 
 The framework should not be organized around a single algorithm or a single
 benchmark. It should continuously expand a family of UAV edge-intelligence
@@ -12,11 +14,11 @@ as meaningful.
 Every scenario follows the same lifecycle:
 
 ```text
-scenario modeling
+combinatorial problem definition
   -> no-RL simulation demo
   -> heuristic minimal closed loop
-  -> RL environment formulation
-  -> RL reproduction
+  -> interactive or route-learning formulation
+  -> RL reproduction on the same instances
   -> RL improvement and ablation
 ```
 
@@ -57,6 +59,10 @@ scenario-level meaning, the scenario still needs modeling work.
 
 ## Current Scenario Family
 
-The first scenario family is:
+The first formal teaching scenario is:
 
-- [UAV Edge Service](uav_edge_service.md)
+- [Static Sensor TSP](static_sensor_tsp.md) (planned implementation).
+
+An earlier [UAV Edge Service](uav_edge_service.md) prototype is runnable and
+kept for later dynamic-scenario research. It is outside the initial TSP
+teaching sequence.

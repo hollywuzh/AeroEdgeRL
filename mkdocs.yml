@@ -18,7 +18,12 @@ nav:
   - Home: index.md
   - Scenarios:
       - Overview: scenarios/README.md
-      - UAV Edge Service: scenarios/uav_edge_service.md
+      - Static Sensor TSP: scenarios/static_sensor_tsp.md
+      - Existing Edge-Service Prototype:
+          - Overview: scenarios/uav_edge_service.md
+          - No-RL Demo: scenarios/prototype_no_rl_uav_edge_demo.md
+          - Heuristic Closed Loop: scenarios/prototype_heuristic_closed_loop.md
+          - Trajectory Visualization: scenarios/prototype_trajectory_data_and_visualization.md
   - Algorithms:
       - Overview: algorithms/README.md
       - PPO: algorithms/ppo.md
@@ -28,11 +33,9 @@ nav:
   - Lecture Notes:
       - Overview: lectures/README.md
       - Course Design: lectures/lecture_design.md
+      - Two Research Tracks: lectures/research_tracks.md
       - "00 Simulation-First Roadmap": lectures/00_simulation_first_roadmap.md
       - "01 GrADyS Core In AeroEdgeRL": lectures/01_gradys_core_in_aeroedge.md
-      - "02 No-RL UAV Edge Service Demo": lectures/02_no_rl_uav_edge_demo.md
-      - "03 Heuristic Closed Loop": lectures/03_heuristic_closed_loop.md
-      - "04 Trajectory Data And Visualization": lectures/04_trajectory_data_and_visualization.md
   - Project Docs:
       - Project Charter: 00_project_charter.md
       - GrADyS Core Preservation: 01_gradysim_core_preservation.md

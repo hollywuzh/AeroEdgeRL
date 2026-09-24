@@ -4,11 +4,12 @@ This page defines how the AeroEdgeRL lecture notes are written and reviewed.
 The [course map](README.md#course-map) lists individual lectures and their
 status. Read this design once, then follow the map in order.
 
-The lecture sequence should teach three things together:
+The lecture sequence should teach four things together:
 
-- discrete-event UAV edge simulation;
-- heuristic closed-loop scenario validation;
-- reinforcement-learning algorithm reproduction.
+- discrete-event UAV simulation;
+- a small combinatorial problem and its no-RL solver/execution loop;
+- interactive reinforcement-learning algorithm reproduction;
+- structured route learning and execution.
 
 ## Lecture Principle
 
@@ -16,11 +17,11 @@ The lectures follow a simulation-first principle:
 
 ```text
 simulation semantics
-  -> scenario closed loop
-  -> heuristic baseline
-  -> RL formulation
-  -> RL algorithm
-  -> experiment and visualization
+  -> static TSP contract
+  -> no-RL tour baselines and execution
+  -> shared RL foundations
+  -> interactive RL / combinatorial RL
+  -> executed-scenario comparison and visualization
 ```
 
 The GrADyS-SIM discrete-event engine owns simulated time, event scheduling,
@@ -28,20 +29,32 @@ handlers, mobility, and node protocols. AeroEdgeRL owns scenarios and their
 decision boundaries. Heuristic and RL policies operate at those boundaries.
 Every lecture should make the boundary it uses visible.
 
+The agreed two-track design is recorded in
+[Two Research Tracks](research_tracks.md). Track A learns one action per
+control decision. Track B extracts a route instance and learns a plan, which
+is then executed in the same simulator. A later lesson can combine planning
+and event-triggered replanning.
+
+The first formal scenario is a closed, single-UAV
+[static sensor TSP](../scenarios/static_sensor_tsp.md). It includes no task
+value, deadline, queue, dynamic arrival, offloading, or communication
+decision. Later research scenarios may add one component at a time, with a
+new problem statement and corresponding baselines.
+
 ## Part I: Simulation First
 
 Part I explains why AeroEdgeRL starts from the simulator rather than from a
 neural-network training loop.
 
-The reader first checks the local simulator import, then follows a UAV edge
-service task from arrival through policy choice, movement, completion or
-expiry, and metric recording. A heuristic baseline closes this loop before
-the first learning algorithm is introduced.
+The reader first checks the local simulator import, then defines a fixed
+sensor TSP, computes a complete route without RL, and executes that route
+through GrADyS mobility and visit events. The earlier dynamic edge-service
+example is kept as a separate framework prototype.
 
 Expected outcome:
 
 ```text
-The reader can run and explain a UAV edge-service simulation without RL.
+The reader can validate a closed TSP tour and explain its GrADyS execution.
 ```
 
 ## Part II: RL Foundations
@@ -50,10 +63,12 @@ Part II introduces reinforcement-learning theory through the simulator-facing
 contract.
 
 The same scenario is mapped to states or observations, legal actions, rewards,
-transitions, and episode endings. Return, value functions, Bellman equations,
-dynamic programming, Monte Carlo methods, and temporal-difference control are
-introduced in that order. Small tabular experiments should expose each update
-rule and compare it against the heuristic baseline.
+transitions, and episode endings. Return and value functions supply a common
+language for both tracks. Bellman equations, dynamic programming, Monte Carlo
+methods, and temporal-difference control support Track A; structured route
+construction needs its own graph, permutation, and objective formulation.
+Small experiments should expose each update rule and compare it against the
+relevant heuristic baseline.
 
 Expected outcome:
 
@@ -61,21 +76,26 @@ Expected outcome:
 The reader can explain what the simulator must provide to an RL algorithm.
 ```
 
-## Part III: Deep RL
+## Part III: Deep RL And Combinatorial RL
 
-Part III moves from tabular algorithms to function approximation and practical
-deep RL.
+Part III contains two parallel paths after the shared foundations.
 
 Function approximation leads to DQN, policy gradients, actor-critic methods,
 and PPO. Each algorithm lecture should connect its objective and update rule
 to the framework's actual observation, action mask, reward, and episode API.
 The existing RLlib PPO smoke command only checks that the pipeline runs;
-training quality requires a separate evaluation.
+training quality requires a separate evaluation. This is Track A.
+
+Track B reuses the Part I static TSP contract and conventional heuristics,
+then teaches neural combinatorial route construction. Track A selects one
+next sensor at a time on the same static instances before moving to richer
+environments. Dynamic tasks and deadlines require separate problem models.
 
 Expected outcome:
 
 ```text
-The reader can reproduce a small PPO experiment and interpret its metrics.
+The reader can diagnose a small interactive RL experiment and evaluate a
+learned route after simulator execution.
 ```
 
 ## Part IV: Multi-Agent RL
@@ -215,6 +235,7 @@ example, PPO appears:
 The [course map](README.md#course-map) is the source for lecture status.
 After this design page, continue to
 [Lecture 00: Simulation-First Roadmap](00_simulation_first_roadmap.md).
-The Part I sequence then explains the GrADyS core, runs the no-RL scenario,
-compares heuristics, and inspects UAV trajectories before Part II formalizes
-the learning problem.
+The Part I sequence then explains the GrADyS core, defines the static TSP,
+compares no-RL route solvers, and inspects executed UAV trajectories before
+Part II formalizes learning. Formal TSP Lectures 02-04 remain planned until
+their commands and artifacts exist.

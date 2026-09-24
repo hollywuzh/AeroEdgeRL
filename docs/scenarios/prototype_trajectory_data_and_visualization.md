@@ -1,8 +1,12 @@
-# Lecture 04: Trajectory Data And Visualization
+# Prototype: Trajectory Data And Visualization
+
+This completes the existing dynamic edge-service demonstration. It is kept as
+a working framework example while the first formal teaching sequence is
+rebuilt around [Static Sensor TSP](static_sensor_tsp.md).
 
 ## Learning Goals
 
-This lecture completes the first non-RL example. You will run the environment
+This prototype completes the earlier dynamic no-RL example. You will run the environment
 check, produce a decision trace, compare heuristic policies, and inspect a UAV
 trajectory against service metrics.
 
@@ -120,7 +124,6 @@ episodes cannot establish robust policy superiority.
 
 ## Next Step
 
-The no-RL simulation, heuristic comparison, and trajectory inspection now
-form a runnable teaching example. Part II can formulate the same scenario as
-an MDP. Before any research-grade RL comparison, tighten the control-boundary
-timing and add multi-seed trajectory inspection.
+The no-RL simulation, heuristic comparison, and trajectory inspection form a
+runnable prototype. Before any research-grade RL comparison, tighten the
+control-boundary timing and add multi-seed trajectory inspection.

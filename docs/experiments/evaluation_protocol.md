@@ -2,6 +2,11 @@
 
 AeroEdgeRL evaluation combines metrics, baselines, and visual inspection.
 
+For the first [static sensor TSP](../scenarios/static_sensor_tsp.md), compare
+route validity, closed-tour length, executed distance/time, inference time,
+and trajectory on the same held-out instances. Task hits, misses, SLOs,
+queues, and dynamic arrivals belong to later scenarios.
+
 ## Minimum Evaluation Checklist
 
 For a scenario-level result, record:

@@ -48,9 +48,11 @@ aeroedge_rl/
   rl/
 ```
 
-The first scenario is `uav_edge_service`, which models UAV-assisted edge service
-orchestration with task generation, observations, action masks, rewards, and
-metrics.
+The first implemented scenario is `uav_edge_service`, which models
+UAV-assisted edge service orchestration with task generation, observations,
+action masks, rewards, and metrics. It is an existing framework prototype.
+The first formal teaching scenario is the planned static sensor TSP described
+in [Two Research Tracks](lectures/research_tracks.md).
 
 The current adapters include:
 

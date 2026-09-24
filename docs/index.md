@@ -16,7 +16,11 @@ If you are learning the framework, begin with:
 1. [Lecture Notes](lectures/README.md)
 2. [Simulation-First Roadmap](lectures/00_simulation_first_roadmap.md)
 3. [GrADyS Core In AeroEdgeRL](lectures/01_gradys_core_in_aeroedge.md)
-4. [No-RL UAV Edge Service Demo](lectures/02_no_rl_uav_edge_demo.md)
+4. [Static Sensor TSP: First Teaching Problem](scenarios/static_sensor_tsp.md)
+
+The earlier [dynamic edge-service demo](scenarios/prototype_no_rl_uav_edge_demo.md)
+remains runnable as a framework prototype. The formal TSP lessons are planned
+and are not yet executable.
 
 ## Math Rendering
 

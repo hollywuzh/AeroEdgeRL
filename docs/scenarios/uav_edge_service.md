@@ -1,6 +1,9 @@
 # UAV Edge Service
 
-The UAV edge service scenario is the first benchmark family in AeroEdgeRL.
+The UAV edge service scenario is an existing dynamic framework prototype.
+The first formal teaching problem is the
+[Static Sensor TSP](static_sensor_tsp.md); this prototype is retained for
+later edge-service research and adapter checks.
 
 Its purpose is to study how UAV agents assist edge-service orchestration under
 task arrivals, mobility, deadlines, and service-quality constraints.

@@ -1,8 +1,11 @@
-# Lecture 03: Heuristic Closed Loop
+# Prototype: Heuristic Closed Loop
+
+This page evaluates the existing dynamic edge-service prototype. The first
+formal teaching problem is the [Static Sensor TSP](static_sensor_tsp.md).
 
 ## Learning Goals
 
-After this lecture, you should be able to trace a decision from candidate tasks
+After this prototype, you should be able to trace a decision from candidate tasks
 through a rule-based policy, a GrADyS-SIM control interval, and an episode metric.
 You should also be able to compare policies under the same generated workload.
 
@@ -168,5 +171,5 @@ systematic trajectory inspection.
 
 ## Next Step
 
-Continue to [Lecture 04](04_trajectory_data_and_visualization.md) to inspect
+Continue to the [trajectory prototype](prototype_trajectory_data_and_visualization.md) to inspect
 the recorded UAV path as part of scenario evaluation.

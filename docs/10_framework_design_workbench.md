@@ -194,33 +194,28 @@ At minimum:
   be interpretable and consistent with the scenario dynamics rather than a
   chaotic set of crossing lines.
 
-## First Scenario Family
+## First Formal Scenario
 
-The first scenario family is UAV-assisted edge service orchestration.
+The first formal teaching scenario is a
+[static sensor TSP](scenarios/static_sensor_tsp.md): one UAV, one depot,
+mandatory visits to fixed sensors, and return to the depot. It minimizes a
+closed Euclidean tour. Task value, deadlines, queues, arrivals, offloading,
+and communication decisions are excluded at this stage.
 
 Initial closed loop:
 
 ```text
-ground devices generate service tasks
-  -> UAVs observe pending tasks and candidate servers
-  -> heuristic policy assigns or ignores tasks
-  -> simulator advances through task completion or deadline miss events
-  -> metrics record latency, completion, SLO violations, and utilization
+seeded depot/sensor instance
+  -> nearest-neighbor and 2-opt tours
+  -> validate complete permutation
+  -> GrADyS route execution and visit events
+  -> compare planned length, executed distance/time, and trajectory
 ```
 
-Initial heuristic baselines:
-
-- random valid assignment;
-- nearest feasible service target;
-- earliest-deadline-first;
-- SLO-risk greedy assignment.
-
-Initial RL reproduction:
-
-- Gymnasium centralized PPO smoke test;
-- PettingZoo multi-agent random and heuristic comparisons;
-- RLlib shared-policy PPO;
-- later IPPO/MAPPO-style variants.
+Track A later chooses one next unvisited sensor at a time; Track B learns a
+complete permutation before departure. Both are evaluated on the same TSP
+instances. The dynamic `uav_edge_service` code is the first implemented
+framework prototype and remains available for later research scenarios.
 
 ## Candidate Scenario Backlog
 
